@@ -7,6 +7,8 @@ import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
+import Link from 'next/link'
+
 
 const Register: NextPage = () => {
     const [username, setUsername] = useState('');
@@ -148,7 +150,7 @@ const Register: NextPage = () => {
                 </div>
                 </div>
                 <Button label='Register' onClick={() => {register()}} loading={isRegisterLoading} />
-                <p style={{textAlign: 'center'}}>Or if you already registered <Button label="login here" className="p-button-link inline p-0" />.</p>
+                <p style={{textAlign: 'center'}}>Or if you already registered <Link href={'/login'}><Button label="login here" className="p-button-link inline p-0" /></Link>.</p>
             </Card>
     </div>
     )

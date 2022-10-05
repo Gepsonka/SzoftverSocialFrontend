@@ -6,8 +6,7 @@ import { Card } from 'primereact/card';
 import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
-import { loadavg } from 'os';
-
+import Link from 'next/link'
 
 const Login: NextPage = () => {
   const [username, setUsername] = useState('');
@@ -56,7 +55,7 @@ const Login: NextPage = () => {
           </span>
         </div>
         <Button label='Login' onClick={() => {login()}} loading={isLoading} />
-        <p style={{textAlign: 'left'}}>Or if don't have account <Button label="register here" className="p-button-link inline p-0" />.</p>
+        <p style={{textAlign: 'left'}}>Or if don't have account <Link href={'/register'}><Button label="register here" className="p-button-link inline p-0" /></Link>.</p>
       </Card>
     </div>
     
