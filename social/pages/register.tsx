@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
@@ -29,11 +29,19 @@ const Register: NextPage = () => {
 
     const [isRegisterLoading, setIsRegisterLoading] = useState(false);
     const [usernameIsTaken, setUsernameIsTaken] = useState(false);
-    const [passowrdsAreMatching, setPasswordsAreMatching] = useState(false);
+    const [passowrdsAreMatching, setPasswordsAreMatching] = useState(true);
     const [emailIsTaken, setEmailIsTaken] = useState(false);
 
     const [isUsernameTakenLoading, setIsUsernameTakenLoading] = useState(false);
     const [isEmailTakenLoading, setIsEmailTakenLoading] = useState(false);
+
+    useEffect(() => {
+        if (password !== passwordAgain){
+            setPasswordsAreMatching(false);
+        } else {
+            setPasswordsAreMatching(true);
+        }
+    }, [passwordAgain])
 
 
     const register = async () => {
@@ -113,7 +121,7 @@ const Register: NextPage = () => {
                 </div>
                 <div className="field mb-5">
                     <span className="p-float-label">
-                        <Calendar id="dateOfBirth" value={dateOfBirth} onChange={(e) => setDateOfBirth(e.value)} />
+                        <Calendar id="dateOfBirth" value={dateOfBirth} onChange={(e) => setDateOfBirth(e.value)} showIcon />
                         <label htmlFor="dateOfBirth">Date of Birth*</label>
                     </span>
                 </div>
@@ -133,24 +141,24 @@ const Register: NextPage = () => {
                         <label htmlFor="emial">Email*</label>
                     </span>
                 </div>
-
-                <div className="field md-5">
+                <div className="field mb-5">
                     <span className="p-float-label p-input-icon-left mb-2">
                         <i className="pi pi-key" />
                         <Password id='password' className={`${passwordIsEmpty ? 'p-invalid' : ''}`} value={password} onChange={(e) => setPassword(e.target.value)} toggleMask  feedback={true} />
                         <label htmlFor="password">Password*</label>
                     </span>
                 </div>
-                <div className="field md-5">
+                <div className="field mb-5">
                     <span className="p-float-label p-input-icon-left mb-2">
                         <i className="pi pi-key" />
-                        <Password id='passwordAgain' className={`${passwordAgainIsEmpty ? 'p-invalid' : ''}`} value={passwordAgain} onChange={(e) => setPasswordAgain(e.target.value)} toggleMask  feedback={false} />
+                        <Password id='passwordAgain' className={`${passwordAgainIsEmpty || !passowrdsAreMatching ? 'p-invalid' : ''}`} value={passwordAgain} onChange={(e) => setPasswordAgain(e.target.value)} toggleMask  feedback={false} />
                         <label htmlFor="passwordAgain">Password Again*</label>
                     </span>
+                    { !passowrdsAreMatching && <small id="username2-help" style={{textAlign: 'left'}} className="p-error block">Passwords are not matching!</small>}
                 </div>
                 </div>
-                <Button label='Register' onClick={() => {register()}} loading={isRegisterLoading} />
-                <p style={{textAlign: 'center'}}>Or if you already registered <Link href={'/login'}><Button label="login here" className="p-button-link inline p-0" /></Link>.</p>
+                <Button className='mb-4' label='Register' onClick={() => {register()}} loading={isRegisterLoading} />
+                <p style={{textAlign: 'left'}}>Or if you already registered <Link href={'/login'}><Button label="login here" className="p-button-link inline p-0" /></Link>.</p>
             </Card>
     </div>
     )
