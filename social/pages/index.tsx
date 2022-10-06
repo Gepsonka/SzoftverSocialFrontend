@@ -4,6 +4,7 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Card } from 'primereact/card';
 
+
 const Home: NextPage = () => {
   return (
     <Card>
