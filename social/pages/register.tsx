@@ -100,6 +100,25 @@ const Register: NextPage = () => {
             setUsernameIsIncorrect(false);
         }
     }
+
+    useEffect(() => {
+        if (firstName.length > 0){
+            setFirstNameIsEmpty(false);
+        }
+    }, [firstName])
+
+
+    useEffect(() => {
+        if (lastName.length > 0){
+            setLastNameIsEmpty(false);
+        }
+    }, [lastName])
+
+    useEffect(() => {
+        if (dateOfBirth !== undefined){
+            setDateOfBirthIsEmpty(false);
+        }
+    }, [dateOfBirth])
     
     useEffect(() => {
         usernameCheck();
@@ -192,16 +211,22 @@ const Register: NextPage = () => {
         if (firstName === ''){
             setFirstNameIsEmpty(true);
             anyEmpty = true;
+        } else {
+            setFirstNameIsEmpty(false);
         }
 
         if (lastName === ''){
             setLastNameIsEmpty(true);
             anyEmpty = true;
+        } else {
+            setLastNameIsEmpty(false);
         }
 
         if (dateOfBirth === undefined){
             setDateOfBirthIsEmpty(true);
             anyEmpty = true;
+        } else {
+            setDateOfBirthIsEmpty(false);
         }
 
         if (usernameIsIncorrect) {
