@@ -42,6 +42,8 @@ const Register: NextPage = () => {
     const [isUsernameTakenLoading, startIsUsernameTakenLoading] = useTransition();
     const [isEmailTakenLoading, startIsEmailTakenLoading] = useTransition();
 
+    const [isEmailValid, setIsEmailValid] = useState(true);
+
 
     const passwordCheck = () => {
         if (password.length === 0){
@@ -125,6 +127,22 @@ const Register: NextPage = () => {
         }
     }, [passwordAgain])
 
+    useEffect(() => {
+        if (email.length === 0){
+            setIsEmailValid(true);
+            return;
+        } else {
+            setEmailIsEmpty(false);
+        }
+
+        let emailRegex = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+        
+        if (!emailRegex.test(email)){
+            setIsEmailValid(false);
+        } else {
+            setIsEmailValid(true);
+        }
+    }, [email])
 
     useEffect(() => {
         // check if email is already taken
@@ -143,7 +161,10 @@ const Register: NextPage = () => {
 
         if (email === ''){
             setEmailIsEmpty(true);
+            setIsEmailValid(false);
             anyEmpty = true;
+        } else {
+            setEmailIsEmpty(false);
         }
 
         if (password === ''){ 
@@ -157,6 +178,8 @@ const Register: NextPage = () => {
         if (passwordAgain === ''){
             setPasswordAgainIsEmpty(true);
             anyEmpty = true;
+        } else {
+            setPasswordAgainIsEmpty(false);
         }
 
         if (passwordAgain !== password){
@@ -246,10 +269,10 @@ const Register: NextPage = () => {
                     <span className={`p-float-label p-input-icon-left ${isEmailTakenLoading ? 'p-input-icon-right' : ''}`}>
                         {isEmailTakenLoading && <i className="pi pi-spin pi-spinner" />}
                         <i className="pi pi-at" />
-                        <InputText className={`${emailIsEmpty || emailIsTaken ? 'p-invalid' : ''}`} id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+                        <InputText className={`${emailIsEmpty || emailIsTaken || !isEmailValid ? 'p-invalid' : ''}`} id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                         <label htmlFor="emial">Email*</label>
                     </span>
-                    {}
+                    { !isEmailValid && <small id="password" style={{textAlign:'left'}} className="p-error block">Email is not valid.</small>}
                 </div>
                 <div className="field mb-5">
                     <span className="p-float-label mb-2">
