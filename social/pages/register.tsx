@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useTransition } from 'react';
 import type { NextPage } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
@@ -19,9 +19,9 @@ const Register: NextPage = () => {
     const [lastName, setLastName] = useState('');
     const [dateOfBirth, setDateOfBirth] = useState(undefined);
 
-    const [usernameIsEmpty, setUsernameIsEmpty] = useState(false);
+    const [usernameIsIncorrect, setUsernameIsIncorrect] = useState(false);
     const [emailIsEmpty, setEmailIsEmpty] = useState(false);
-    const [passwordIsEmpty, setPasswordIsEmpty] = useState(false);
+    const [passwordIsIncorrect, setPasswordIsIncorrect] = useState(false);
     const [passwordAgainIsEmpty, setPasswordAgainIsEmpty] = useState(false);
     const [firstNameIsEmpty, setFirstNameIsEmpty] = useState(false);
     const [lastNameIsEmpty, setLastNameIsEmpty] = useState(false);
@@ -32,8 +32,90 @@ const Register: NextPage = () => {
     const [passowrdsAreMatching, setPasswordsAreMatching] = useState(true);
     const [emailIsTaken, setEmailIsTaken] = useState(false);
 
-    const [isUsernameTakenLoading, setIsUsernameTakenLoading] = useState(false);
-    const [isEmailTakenLoading, setIsEmailTakenLoading] = useState(false);
+    const [isUsernameLongEnough, setIsUsernameLongEnough] = useState(true);
+
+    // password rules states
+    const [isPasswordLenghtMinSix, setIsPasswordLenghtMinSix] = useState(true);
+    const [isPasswordContainingLetter, setIsPasswordContainingLetter] = useState(true);
+    const [isPasswordContainingNumber, setIsPasswordContainingNumber] = useState(true);
+
+    const [isUsernameTakenLoading, startIsUsernameTakenLoading] = useTransition();
+    const [isEmailTakenLoading, startIsEmailTakenLoading] = useTransition();
+
+
+    const passwordCheck = () => {
+        if (password.length === 0){
+            setPasswordIsIncorrect(false);
+            setIsPasswordLenghtMinSix(true);
+            setIsPasswordContainingLetter(true);
+            setIsPasswordContainingNumber(true);
+            return;
+        }
+
+        if (password.length <= 6){
+            setIsPasswordLenghtMinSix(false);
+            setPasswordIsIncorrect(true);
+        } else {
+            setIsPasswordLenghtMinSix(true);
+        }
+
+        let regExpLetters = /[a-zA-Z]/g;
+
+        if (!regExpLetters.test(password)){
+            setIsPasswordContainingLetter(false);
+            setPasswordIsIncorrect(true);
+        } else {
+            setIsPasswordContainingLetter(true);
+        }
+
+        let regExpNumerical = /[0-9]/g;
+
+        if (!regExpNumerical.test(password)){
+            setIsPasswordContainingNumber(false);
+            setPasswordIsIncorrect(true);
+        } else {
+            setIsPasswordContainingNumber(true);
+        }
+
+        if (isPasswordContainingLetter && isPasswordContainingNumber && isPasswordLenghtMinSix){
+            setPasswordIsIncorrect(false);
+        }
+    }
+
+    const usernameCheck = () => {
+        // when the username is empty we do not want to check
+        if (username.length === 0){
+            setIsUsernameLongEnough(true);
+            setUsernameIsIncorrect(false);
+            return;
+        }
+
+        if (username.length <= 8){
+            setIsUsernameLongEnough(false);
+            setUsernameIsIncorrect(true);
+        } else {
+            setIsUsernameLongEnough(true);
+            setUsernameIsIncorrect(false);
+        }
+    }
+    
+    useEffect(() => {
+        usernameCheck();
+    }, [username])
+
+    useEffect(() => {
+        // check if username is already taken
+    }, [username])
+
+    useEffect(() => {
+        passwordCheck();
+        if (passwordAgain !== password){
+            setPasswordsAreMatching(false);
+        } else {
+            setPasswordsAreMatching(true);
+        }
+
+    }, [password])
 
     useEffect(() => {
         if (password !== passwordAgain){
@@ -44,12 +126,18 @@ const Register: NextPage = () => {
     }, [passwordAgain])
 
 
+    useEffect(() => {
+        // check if email is already taken
+    }, [email])
+
+
     const register = async () => {
         setIsRegisterLoading(true);
         let anyEmpty = false;
         
         if (username === ''){
-            setUsernameIsEmpty(true);
+            setUsernameIsIncorrect(true);
+            setIsUsernameLongEnough(false);
             anyEmpty = true;
         }
 
@@ -59,13 +147,23 @@ const Register: NextPage = () => {
         }
 
         if (password === ''){ 
-            setPasswordIsEmpty(true);
+            setPasswordIsIncorrect(true);
+            setIsPasswordLenghtMinSix(false);
+            setIsPasswordContainingNumber(false);
+            setIsPasswordLenghtMinSix(false);
             anyEmpty = true;
         }
 
         if (passwordAgain === ''){
             setPasswordAgainIsEmpty(true);
             anyEmpty = true;
+        }
+
+        if (passwordAgain !== password){
+            setPasswordsAreMatching(false);
+            anyEmpty = true;
+        } else {
+            setPasswordsAreMatching(true);
         }
 
         if (firstName === ''){
@@ -82,6 +180,15 @@ const Register: NextPage = () => {
             setDateOfBirthIsEmpty(true);
             anyEmpty = true;
         }
+
+        if (usernameIsIncorrect) {
+            anyEmpty =  true;
+        }
+
+        if (passwordIsIncorrect){
+            anyEmpty = true;
+        }
+
 
         if (anyEmpty){
             setIsRegisterLoading(false);
@@ -101,56 +208,61 @@ const Register: NextPage = () => {
     }
 
     return (
-        <div className='grid justify-content-center h-screen align-content-center auth-bg'>
+        <div className='relative grid justify-content-center align-content-center auth-bg auth-body py-6'>
             <Card className='col-4 md:col-4 sm:col-10 text-center'>  
                 <h2 className='mb-5 mt-1' >Create your account</h2>
                 <div className='p-fluid'>
                 <div className="field mb-5">
                     <span className={`p-float-label p-input-icon-left`}>
-                        <i className="pi pi-dot" />
+                        <i className="pi pi-users" />
                         <InputText className={`${firstNameIsEmpty ? 'p-invalid' : ''}`} id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} />
                         <label htmlFor="firstName">First Name*</label>
                     </span>
                 </div>
                 <div className="field mb-5">
                     <span className={`p-float-label p-input-icon-left`}>
-                        <i className="pi pi-dot" />
+                        <i className="pi pi-users" />
                         <InputText className={`${lastNameIsEmpty ? 'p-invalid' : ''}`} id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} />
                         <label htmlFor="lastName">Last Name*</label>
                     </span>
                 </div>
                 <div className="field mb-5">
                     <span className="p-float-label">
-                        <Calendar id="dateOfBirth" value={dateOfBirth} onChange={(e) => setDateOfBirth(e.value)} showIcon />
+                        <Calendar className={`${dateOfBirthIsEmpty ? 'p-invalid' : ''}`} id="dateOfBirth" value={dateOfBirth} onChange={(e) => setDateOfBirth(e.value)} showIcon />
                         <label htmlFor="dateOfBirth">Date of Birth*</label>
                     </span>
                 </div>
                 <div className="field mb-5">
                     <span className={`p-float-label p-input-icon-left ${isUsernameTakenLoading ? 'p-input-icon-right' : ''}`}>
                         {isUsernameTakenLoading && <i className="pi pi-spin pi-spinner" />}
-                        <i className="pi pi-search" />
-                        <InputText className={` ${usernameIsEmpty || usernameIsTaken ? 'p-invalid' : ''}`} id="username" value={username} onChange={(e) => setUsername(e.target.value)} />
+                        <i className="pi pi-user" />
+                        <InputText className={` ${usernameIsIncorrect || usernameIsTaken ? 'p-invalid' : ''}`} id="username" value={username} onChange={(e) => setUsername(e.target.value)} />
                         <label htmlFor="username">Username*</label>
                     </span>
+                    { usernameIsTaken && <small id="username" style={{textAlign:'left'}} className="p-error block">Username is already taken.</small>}
+                    { !isUsernameLongEnough && <small id="username" style={{textAlign:'left'}} className="p-error block">Username must be at least 8 characters long.</small> }
                 </div>
                 <div className="field mb-5">
                     <span className={`p-float-label p-input-icon-left ${isEmailTakenLoading ? 'p-input-icon-right' : ''}`}>
                         {isEmailTakenLoading && <i className="pi pi-spin pi-spinner" />}
-                        <i className="pi pi-dot" />
+                        <i className="pi pi-at" />
                         <InputText className={`${emailIsEmpty || emailIsTaken ? 'p-invalid' : ''}`} id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                         <label htmlFor="emial">Email*</label>
                     </span>
+                    {}
                 </div>
                 <div className="field mb-5">
-                    <span className="p-float-label p-input-icon-left mb-2">
-                        <i className="pi pi-key" />
-                        <Password id='password' className={`${passwordIsEmpty ? 'p-invalid' : ''}`} value={password} onChange={(e) => setPassword(e.target.value)} toggleMask  feedback={true} />
+                    <span className="p-float-label mb-2">
+                        <Password id='password' className={`${passwordIsIncorrect ? 'p-invalid' : ''}`} value={password} onChange={(e) => setPassword(e.target.value)} toggleMask  feedback={true} />
                         <label htmlFor="password">Password*</label>
                     </span>
+                    { !isPasswordContainingLetter && <small id="password" style={{textAlign:'left'}} className="p-error block">Password must contain at least one letter.</small>}
+                    { !isPasswordContainingNumber && <small id="password" style={{textAlign:'left'}} className="p-error block">Password must contain at least one number.</small>}
+                    { !isPasswordLenghtMinSix && <small id="password" style={{textAlign:'left'}} className="p-error block">Password must be at least 6 characters long.</small>}
+
                 </div>
                 <div className="field mb-5">
-                    <span className="p-float-label p-input-icon-left mb-2">
-                        <i className="pi pi-key" />
+                    <span className="p-float-label mb-2">
                         <Password id='passwordAgain' className={`${passwordAgainIsEmpty || !passowrdsAreMatching ? 'p-invalid' : ''}`} value={passwordAgain} onChange={(e) => setPasswordAgain(e.target.value)} toggleMask  feedback={false} />
                         <label htmlFor="passwordAgain">Password Again*</label>
                     </span>

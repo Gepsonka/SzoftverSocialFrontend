@@ -22,3 +22,7 @@ a {
   background: url(../resources/stacked-peaks-haikei.svg) no-repeat center;
   background-size: cover;
 }
+
+.auth-body {
+  min-height: 100vh;
+}

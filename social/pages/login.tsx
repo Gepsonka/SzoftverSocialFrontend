@@ -39,7 +39,7 @@ const Login: NextPage = () => {
   }
 
   return (
-    <div className='grid justify-content-center h-screen align-content-center auth-bg'>
+    <div className='grid justify-content-center align-content-center auth-bg auth-body'>
       <Card className='col-4 md:col-4 sm:col-10 text-center'>  
         <h2 className='mb-5 mt-1' >Login</h2>
         <div className="field mb-5">
