@@ -3,6 +3,8 @@
 
 export type NavBarProps = {
     isLoggedIn: boolean;
+    firstName: string | null;
+    lastName: string | null;
 }
 
 export interface LoginResponse {
