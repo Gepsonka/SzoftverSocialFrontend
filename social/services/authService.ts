@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios"
-import { loginResponse } from "../interfaces/interafces";
+import { LoginResponse } from "../interfaces/interafces";
 import { deleteInvalidToken, setAuthToken } from "./JWTService";
 import { LoginError } from "./erroService";
 

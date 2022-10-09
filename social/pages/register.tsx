@@ -8,9 +8,15 @@ import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
 import { Calendar } from 'primereact/calendar';
 import Link from 'next/link'
-
+import { Dialog } from 'primereact/dialog';
+import { useRouter } from 'next/router';
+import { RegisterRequest } from '../interfaces/interafces';
+import axios from 'axios';
+import { registerUser, checkUsernameExists, checkEmailExists } from '../services/registerService';
 
 const Register: NextPage = () => {
+    const router = useRouter();
+
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -39,10 +45,13 @@ const Register: NextPage = () => {
     const [isPasswordContainingLetter, setIsPasswordContainingLetter] = useState(true);
     const [isPasswordContainingNumber, setIsPasswordContainingNumber] = useState(true);
 
-    const [isUsernameTakenLoading, startIsUsernameTakenLoading] = useTransition();
-    const [isEmailTakenLoading, startIsEmailTakenLoading] = useTransition();
+    const [isUsernameTakenLoading, setIsUsernameTakenLoading] = useState(false);
+    const [isEmailTakenLoading, setIsEmailTakenLoading] = useState(false);
 
     const [isEmailValid, setIsEmailValid] = useState(true);
+
+    const [registrationDialogVisibile, setRegistrationDialogVisibile] = useState(false);
+    const [failedRegistrationDialogVisible, setFailedRegistrationDialogVisible] = useState(true);
 
 
     const passwordCheck = () => {
@@ -92,7 +101,7 @@ const Register: NextPage = () => {
             return;
         }
 
-        if (username.length <= 8){
+        if (username.length < 8){
             setIsUsernameLongEnough(false);
             setUsernameIsIncorrect(true);
         } else {
@@ -122,10 +131,20 @@ const Register: NextPage = () => {
     
     useEffect(() => {
         usernameCheck();
-    }, [username])
+    }, [username]);
 
-    useEffect(() => {
-        // check if username is already taken
+    useEffect(() => { // Checking if username is taken at every change
+        setIsUsernameTakenLoading(true);
+        axios.post(`${process.env.NEXT_PUBLIC_FLASK_BACKEND}/is-username-exists`, {"username": username}).then((res) => {
+            if (res.data.isTaken){
+                setUsernameIsTaken(true);
+            } else {
+                setUsernameIsTaken(false);
+            }
+        }).catch((e) => {
+            setUsernameIsTaken(false);
+        })
+        setIsUsernameTakenLoading(false);
     }, [username])
 
     useEffect(() => {
@@ -164,24 +183,33 @@ const Register: NextPage = () => {
     }, [email])
 
     useEffect(() => {
-        // check if email is already taken
+        setIsEmailTakenLoading(true);
+        axios.post(`${process.env.NEXT_PUBLIC_FLASK_BACKEND}/is-email-exists`, {"email": email}).then((res) => {
+            if (res.data.isTaken){
+                setEmailIsTaken(true);
+            } else {
+                setEmailIsTaken(false);
+            }
+        }).catch((e) => {
+            setEmailIsTaken(false);
+        })
+        setIsEmailTakenLoading(false);
     }, [email])
 
 
     const register = async () => {
-        setIsRegisterLoading(true);
-        let anyEmpty = false;
+        let anyError = false;
         
         if (username === ''){
             setUsernameIsIncorrect(true);
             setIsUsernameLongEnough(false);
-            anyEmpty = true;
+            anyError = true;
         }
 
         if (email === ''){
             setEmailIsEmpty(true);
             setIsEmailValid(false);
-            anyEmpty = true;
+            anyError = true;
         } else {
             setEmailIsEmpty(false);
         }
@@ -191,68 +219,95 @@ const Register: NextPage = () => {
             setIsPasswordLenghtMinSix(false);
             setIsPasswordContainingNumber(false);
             setIsPasswordLenghtMinSix(false);
-            anyEmpty = true;
+            anyError = true;
         }
 
         if (passwordAgain === ''){
             setPasswordAgainIsEmpty(true);
-            anyEmpty = true;
+            anyError = true;
         } else {
             setPasswordAgainIsEmpty(false);
         }
 
         if (passwordAgain !== password){
             setPasswordsAreMatching(false);
-            anyEmpty = true;
+            anyError = true;
         } else {
             setPasswordsAreMatching(true);
         }
 
         if (firstName === ''){
             setFirstNameIsEmpty(true);
-            anyEmpty = true;
+            anyError = true;
         } else {
             setFirstNameIsEmpty(false);
         }
 
         if (lastName === ''){
             setLastNameIsEmpty(true);
-            anyEmpty = true;
+            anyError = true;
         } else {
             setLastNameIsEmpty(false);
         }
 
         if (dateOfBirth === undefined){
             setDateOfBirthIsEmpty(true);
-            anyEmpty = true;
+            anyError = true;
         } else {
             setDateOfBirthIsEmpty(false);
         }
 
+        if (usernameIsTaken){
+            setUsernameIsIncorrect(true);
+            anyError = true;
+        }
+
+        if (emailIsTaken){
+            anyError = true;
+        }
+
         if (usernameIsIncorrect) {
-            anyEmpty =  true;
+            anyError =  true;
         }
 
         if (passwordIsIncorrect){
-            anyEmpty = true;
+            anyError = true;
         }
 
 
-        if (anyEmpty){
+        if (anyError){
             setIsRegisterLoading(false);
             return;
         }
 
+        setIsRegisterLoading(true);
+
+        let requestData: RegisterRequest = {
+            firstName: firstName,
+            lastName: lastName,
+            dateOfBirth: dateOfBirth!,
+            username: username,
+            email: email,
+            password: password
+        }
+
+        try {
+            await registerUser(requestData);
+            setRegistrationDialogVisibile(true);
+        } catch (e){
+            setFailedRegistrationDialogVisible(true);
+        }
+
         setIsRegisterLoading(false);
-        // TODO: request implementation
     }
-
-    const checkUsernameIsTaken = async () => {
-        // TODO: implementation
-    }
-
-    const checkEmailIsTaken = async () => {
-        // TODO: implementation
+    
+    const renderDialogFooter = () => {
+        return (
+            <div>
+                <Button label='Go log in!' className="p-button-success" onClick={() => router.push('/login')}/>
+                <Button label='Ok' className="p-button-outlined" onClick={() => setRegistrationDialogVisibile(false)}/>
+            </div>
+        );
     }
 
     return (
@@ -282,8 +337,8 @@ const Register: NextPage = () => {
                 </div>
                 <div className="field mb-5">
                     <span className={`p-float-label p-input-icon-left ${isUsernameTakenLoading ? 'p-input-icon-right' : ''}`}>
-                        {isUsernameTakenLoading && <i className="pi pi-spin pi-spinner" />}
-                        <i className="pi pi-user" />
+                        { isUsernameTakenLoading && <i className="pi pi-spin pi-spinner" />}
+                        { !isUsernameTakenLoading && <i className="pi pi-user" />}
                         <InputText className={` ${usernameIsIncorrect || usernameIsTaken ? 'p-invalid' : ''}`} id="username" value={username} onChange={(e) => setUsername(e.target.value)} />
                         <label htmlFor="username">Username*</label>
                     </span>
@@ -292,12 +347,13 @@ const Register: NextPage = () => {
                 </div>
                 <div className="field mb-5">
                     <span className={`p-float-label p-input-icon-left ${isEmailTakenLoading ? 'p-input-icon-right' : ''}`}>
-                        {isEmailTakenLoading && <i className="pi pi-spin pi-spinner" />}
-                        <i className="pi pi-at" />
+                        { isEmailTakenLoading && <i className="pi pi-spin pi-spinner" />}
+                        { !isEmailTakenLoading && <i className="pi pi-at" />}
                         <InputText className={`${emailIsEmpty || emailIsTaken || !isEmailValid ? 'p-invalid' : ''}`} id="email" value={email} onChange={(e) => setEmail(e.target.value)} />
                         <label htmlFor="emial">Email*</label>
                     </span>
                     { !isEmailValid && <small id="password" style={{textAlign:'left'}} className="p-error block">Email is not valid.</small>}
+                    { emailIsTaken && <small id="password" style={{textAlign:'left'}} className="p-error block">User with this email is already registered.</small>}
                 </div>
                 <div className="field mb-5">
                     <span className="p-float-label mb-2">
@@ -320,6 +376,12 @@ const Register: NextPage = () => {
                 <Button className='mb-4' label='Register' onClick={() => {register()}} loading={isRegisterLoading} />
                 <p style={{textAlign: 'left'}}>Or if you already registered <Link href={'/login'}><Button label="login here" className="p-button-link inline p-0" /></Link>.</p>
             </Card>
+            <Dialog header="Successful registration!" footer={renderDialogFooter()} visible={registrationDialogVisibile} onHide={() => setRegistrationDialogVisibile(false)}>
+                You have registered successfully. Now you can create like posts, follow members of the community, anytime!
+            </Dialog>
+            <Dialog header="Registration failed!" footer={<Button label='Ok' className="p-button-danger" onClick={() => setFailedRegistrationDialogVisible(false)}/>} visible={failedRegistrationDialogVisible} onHide={() => setFailedRegistrationDialogVisible(false)}>
+                Something bad happened! Try again later...
+            </Dialog>
     </div>
     )
 }
