@@ -51,7 +51,7 @@ const Register: NextPage = () => {
     const [isEmailValid, setIsEmailValid] = useState(true);
 
     const [registrationDialogVisibile, setRegistrationDialogVisibile] = useState(false);
-    const [failedRegistrationDialogVisible, setFailedRegistrationDialogVisible] = useState(true);
+    const [failedRegistrationDialogVisible, setFailedRegistrationDialogVisible] = useState(false);
 
 
     const passwordCheck = () => {
