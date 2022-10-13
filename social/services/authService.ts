@@ -7,6 +7,7 @@ import { LoginError } from "./erroService";
 
 export const loginUser = async (username: string, password: string) => {
     try {
+        console.log(`${process.env.NEXT_PUBLIC_FLASK_BACKEND}/login`)
         let res = await axios.post(`${process.env.NEXT_PUBLIC_FLASK_BACKEND}/login`, {
             username: username,
             password: password
@@ -14,7 +15,9 @@ export const loginUser = async (username: string, password: string) => {
 
         setAuthToken(res.data.token);
     } catch (e: any) {
-        throw new LoginError('Wrong username or password');
+        if (e.request.status === 401){
+            throw new LoginError("Bad username or password");
+        }
     }
 }
 

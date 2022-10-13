@@ -53,6 +53,7 @@ const Login: NextPage = () => {
       setUsernameIsValid(false);
       setPasswordIsValid(false);
       setBadPasswordOrUsername(true);
+      console.log(e)
     }
     setIsLoading(false);
   }

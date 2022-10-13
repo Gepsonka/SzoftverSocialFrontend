@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import { Image } from 'primereact/image';
 import { useState } from "react";
 import { TabView, TabPanel } from 'primereact/tabview';
+import Post from "../components/Post";
 
 
 
@@ -34,8 +35,8 @@ const Profile: NextPage = () => {
                 </div>
                 <div className="sm:col-10 md:col-8 lg:col-8">
                     <TabView activeIndex={tabIndex} onTabChange={(e) => setTabIndex(e.index)}>
-                        <TabPanel header="User posts" leftIcon="pi pi-fw pi-send">
-                            
+                        <TabPanel  header="User posts" leftIcon="pi pi-fw pi-send">
+                            <Post/>
                         </TabPanel>
                         <TabPanel header="Create post" leftIcon="pi pi-fw pi-plus">
 
@@ -53,6 +54,5 @@ const Profile: NextPage = () => {
         </div>
     )
 }
-
 
 export default Profile;
