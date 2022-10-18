@@ -20,3 +20,20 @@ export interface RegisterRequest {
     email: string;
     password: string;
 }
+
+export interface PostComment {
+    avatarURI: string;
+    createdAt: Date;
+    content: string;
+}
+
+export interface PostProps {
+    avatarURI: string | null;
+    authorNickname: string;
+    createdAt: Date;
+    title: string;
+    content: string;
+    imageURIs: string[] | null;
+    likedByUser: boolean;
+    comments: PostComment[];
+}

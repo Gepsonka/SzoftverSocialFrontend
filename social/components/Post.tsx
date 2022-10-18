@@ -4,13 +4,14 @@ import { Panel } from 'primereact/panel';
 import { Avatar } from 'primereact/avatar';
 import { Button } from 'primereact/button';
 import Link from "next/link";
+import { PostProps } from "../interfaces/interafces"
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import 'primereact/resources/primereact.min.css';
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
 
 
-const Post = () => {
+const Post = (props: PostProps) => {
     const router = useRouter();
 
     const headerTemplate = () => {
@@ -27,7 +28,13 @@ const Post = () => {
 
     return (
         <Panel headerTemplate={headerTemplate}>
-            
+            <div>
+                <h2>Title</h2>
+                <p>DKASMLDKMSLM</p>
+            </div>
+            <div>
+                <Button icon="pi pi-heart" className="p-button-danger p-button-rounded" />
+            </div>
         </Panel>
     )
 }
