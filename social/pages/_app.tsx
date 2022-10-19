@@ -1,3 +1,4 @@
+import React from 'react';
 import '../styles/globals.css'
 import type { AppProps } from 'next/app'
 import "primereact/resources/themes/lara-light-indigo/theme.css";
@@ -11,3 +12,8 @@ function MyApp({ Component, pageProps }: AppProps) {
 }
 
 export default MyApp
+
+
+// WHEN THE PROGRAM RESPONDS WITH REACT IS UNDEFINED CHECK THE PRIMEREACT IMPORTS!!!!
+// import { Avatar } from "primereact/avatar"; ==== WORKS
+// import { Avatar } from "primereact/"; ========== DOES NOT WORK!!!! 

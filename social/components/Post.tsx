@@ -1,6 +1,5 @@
-import React, { Context, createContext, useReducer } from "react";
+import React, { Context, createContext, useReducer, useState } from "react";
 import { useRouter } from "next/router";
-import { Panel } from 'primereact/panel';
 import { Avatar } from 'primereact/avatar';
 import { Button } from 'primereact/button';
 import Link from "next/link";
@@ -10,6 +9,8 @@ import 'primereact/resources/primereact.min.css';
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
 import { Card } from "primereact/card";
+import { InputTextarea } from "primereact/inputtextarea";
+
 
 export interface PostComment {
     userId: number,
@@ -18,70 +19,24 @@ export interface PostComment {
     createdAt: Date
 }
 
-export interface PostReducerState {
-    comments: PostComment[],
-    createCommentContent: string,
+type PostContextType = {
+    newComment: string | null,
+    setNewComment: React.Dispatch<React.SetStateAction<string>>
 }
 
 
-const initialState: PostReducerState = {
-    comments: [],
-    createCommentContent: ''
+const iUserContextState = {
+    newComment: '',
+    setNewComment: () => {}
 }
 
-enum PostActionsKind {
-    UPDATE_NEW_COMMENT = 'UPDATE_NEW_COMMENT',
-    CREATE_NEW_COMMENT_BLOCK = 'CREATE_NEW_COMMENT_BLOCK'
-}
-
-interface PostAction {
-    type: PostActionsKind,
-    payload: string |  PostComment
-}
-
-
-const reducer = (state: PostReducerState, action: PostAction) => {
-    const {type, payload} = action;
-    switch (type){
-        case PostActionsKind.UPDATE_NEW_COMMENT:
-            return {
-                comments: [
-                    ...state.comments
-                ],
-                createCommentContent: payload
-            }
-
-        case PostActionsKind.CREATE_NEW_COMMENT_BLOCK:
-            return {
-                comments: [
-                    ...state.comments,
-                    payload
-                ],
-                createCommentContent: state.createCommentContent
-            }
-    }
-}
-
-
-const PostContext = createContext<PostReducerState | null>(null);
+export const PostContext = createContext<PostContextType>(iUserContextState);
 
 const Post = (props: PostProps) => {
     const router = useRouter();
-    const [state, dispatch] = useReducer(reducer, {
-        comments: [],
-        createCommentContent: ''
-    });
-
-    const providerValue = {
-        commentsBlocks: state!.comments,
-        addCommentBlock:  (commentBlock: PostComment) => {
-            dispatch({type: PostActionsKind.CREATE_NEW_COMMENT_BLOCK, commentBlock});
-        },
-
-        updateComment: (commentContent: string) => {
-            dispatch({type: PostActionsKind.UPDATE_NEW_COMMENT, commentContent});
-        }
-    }
+    const [newComment, setNewComment] = useState<string>('');
+    const [isLikedByUser, setIsLikedByUser] = useState<boolean>(props.isLikedByUser);
+    
 
     const responsiveOptions = [
         {
@@ -110,26 +65,37 @@ const Post = (props: PostProps) => {
         )
     }
 
-
     const footerTemplate = () => {
 
         return (
-            <div></div>
+            <div className="border-top-1 border-400 pt-3 ">
+                <div>
+                    <div className="flex w-full p-fluid mb-2">
+                        <Avatar className="mr-1" image="https://pfpmaker.com/_nuxt/img/profile-3-1.3e702c5.png" />
+                        <InputTextarea autoResize value={newComment} onChange={(e) => setNewComment(e.target.value)} />
+                    </div>
+                    <div className="flex w-full justify-content-end">
+                        <Button label="Comment" className="p-button-outlined p-button-sm" disabled={newComment === ''} />
+                    </div>
+                </div>
+                
+            </div>
         )
     }
 
-    
+    // TODO: create liking call to backend
 
     return (
-        <PostContext.Provider value={providerValue}>
-            <Card header={headerTemplate}>
+        <PostContext.Provider value={{newComment, setNewComment}}>
+            <Card header={headerTemplate} footer={footerTemplate}>
                 <div>
                     <h2>Title</h2>
                     <p>DKASMLDKMSLM</p>
                 </div>
                 <div>
-                    <Button icon="pi pi-heart" className="p-button-danger p-button-rounded" />
+                    <Button onClick={() => setIsLikedByUser(!isLikedByUser)} icon={`pi ${isLikedByUser ?  'pi-heart-fill': 'pi-heart'}`} className="p-button-outlined p-button-danger p-button-rounded" />
                 </div>
+                
             </Card>
         </PostContext.Provider>
     )

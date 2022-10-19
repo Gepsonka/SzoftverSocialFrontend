@@ -22,9 +22,11 @@ export interface RegisterRequest {
 }
 
 export interface PostComment {
+    postID: number;
     avatarURI: string;
     createdAt: Date;
     content: string;
+    isUserAuthor: boolean;
 }
 
 export interface PostProps {
@@ -34,6 +36,6 @@ export interface PostProps {
     title: string;
     content: string;
     imageURIs: string[] | null;
-    likedByUser: boolean;
+    isLikedByUser: boolean;
     comments: PostComment[];
 }

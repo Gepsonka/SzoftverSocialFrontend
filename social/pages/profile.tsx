@@ -1,3 +1,4 @@
+import React from "react";
 import { NextPage } from "next";
 import Navbar from "../components/Navbar";
 import { Image } from 'primereact/image';
@@ -36,7 +37,7 @@ const Profile: NextPage = () => {
                 <div className="sm:col-10 md:col-8 lg:col-8">
                     <TabView activeIndex={tabIndex} onTabChange={(e) => setTabIndex(e.index)}>
                         <TabPanel  header="User posts" leftIcon="pi pi-fw pi-send">
-                            <Post/>
+                            <Post avatarURI={''} authorNickname={'csoki'} createdAt={new Date()} title="asdad" content={""} imageURIs={null} isLikedByUser={false} comments={[]} />
                         </TabPanel>
                         <TabPanel header="Create post" leftIcon="pi pi-fw pi-plus">
 

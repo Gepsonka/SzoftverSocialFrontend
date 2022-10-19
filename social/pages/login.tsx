@@ -76,7 +76,7 @@ const Login: NextPage = () => {
         </div>
         { badPasswordOrUsername && <small style={{textAlign:'left'}} className="p-error block mb-3">Wrong usename or password.</small>}
         <Button label='Login' onClick={() => {login()}} loading={isLoading} />
-        <p style={{textAlign: 'left'}}>Or if don't have account <Link href={'/register'}><Button label="register here" className="p-button-link inline p-0" /></Link>.</p>
+        <p style={{textAlign: 'left'}}>Or if don&apos;t have account <Link href={'/register'}><Button label="register here" className="p-button-link inline p-0" /></Link>.</p>
       </Card>
     </div>
     
