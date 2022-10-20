@@ -30,12 +30,13 @@ export interface PostComment {
 }
 
 export interface PostProps {
-    avatarURI: string | null;
+    avatarURI: string;
     authorNickname: string;
     createdAt: Date;
+    updatedAt?: Date;
     title: string;
     content: string;
-    imageURIs: string[] | null;
+    imageURIs?: string[];
     isLikedByUser: boolean;
     comments: PostComment[];
 }
