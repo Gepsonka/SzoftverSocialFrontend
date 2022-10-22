@@ -17,3 +17,6 @@ export default MyApp
 // WHEN THE PROGRAM RESPONDS WITH REACT IS UNDEFINED CHECK THE PRIMEREACT IMPORTS!!!!
 // import { Avatar } from "primereact/avatar"; ==== WORKS
 // import { Avatar } from "primereact/"; ========== DOES NOT WORK!!!! 
+
+// never use new Date() because it will mess with the ssr, and will throw hydration error !!!
+// => Always give Date('<some_exact_date>')

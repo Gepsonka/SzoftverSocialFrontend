@@ -25,7 +25,7 @@ const HeaderTemplate = (props: HeaderTemplateProps) => {
             <h3 className="inline mr-2">{props.authorNickname}</h3>
             <small className="align-self-center flex-grow-1">{props.updatedAt === undefined ? `Created: ${props.createdAt.toUTCString()}` : `Edited: ${props.updatedAt.toUTCString()}`}</small>
             { !postContext.isEditing && <Button onClick={postContext.postDeleteConfirm} icon="pi pi-trash" className="p-button-rounded p-button-outlined p-button-sm p-button-secondary align-self-center" />}
-            <Button icon="pi pi-pencil" className="ml-2 p-button-rounded p-button-secondary p-button-outlined align-self-center" aria-label="Bookmark" onClick={() => postContext.setIsEditing(!postContext.isEditing)}  />
+            <Button icon="pi pi-pencil" className="ml-2 p-button-rounded p-button-secondary p-button-outlined align-self-center" aria-label="Bookmark" onClick={() => postContext.setIsEditing!(!postContext.isEditing)}  />
         </div>
     )
 }

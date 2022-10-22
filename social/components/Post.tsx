@@ -1,4 +1,4 @@
-import React, { Context, createContext, useReducer, useRef, useState } from "react";
+import React, { Context, createContext, useEffect, useReducer, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import { Avatar } from 'primereact/avatar';
 import { Button } from 'primereact/button';
@@ -17,9 +17,57 @@ import HeaderTemplate from "./PostPanel/HeaderTemplate";
 import FooterTemplate from "./PostPanel/FooterTemplate";
 import { CommentProps } from "./PostPanel/Comment";
 
+const avatarURL: string = 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjpPCSmbEz9MbdmDRHnq0A-r1IgQ2JecU5dA&usqp=CAU';
 
 
-
+const testComments: CommentProps[] = [
+    {
+        postId: 1,
+        commentId: 1,
+        authorId: 1,
+        avatarURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHCZuslFbn42wwA9qw6ywBERhtpr_yOFy3Cw&usqp=CAU',
+        commentAuthorNickname: "Kuki",
+        content: 'just a new comment',
+        createdAt: new Date('20 December 2019 14:48')
+    },
+    {
+        postId: 1,
+        commentId: 1,
+        authorId: 1,
+        avatarURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHCZuslFbn42wwA9qw6ywBERhtpr_yOFy3Cw&usqp=CAU',
+        commentAuthorNickname: "Kuki",
+        content: 'just a new comment',
+        createdAt: new Date('20 December 2019 14:48')
+    },
+    {
+        postId: 1,
+        commentId: 1,
+        authorId: 1,
+        avatarURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHCZuslFbn42wwA9qw6ywBERhtpr_yOFy3Cw&usqp=CAU',
+        commentAuthorNickname: "Kuki",
+        content: 'just a new comment',
+        createdAt: new Date('20 December 2019 14:48')
+    },
+    {
+        postId: 1,
+        commentId: 1,
+        authorId: 1,
+        avatarURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHCZuslFbn42wwA9qw6ywBERhtpr_yOFy3Cw&usqp=CAU',
+        commentAuthorNickname: "Kuki",
+        content: 'just a new asdasda',
+        createdAt: new Date('20 December 2019 14:48'),
+        updatedAt: new Date('20 December 2019 14:48')
+    },
+    {
+        postId: 1,
+        commentId: 1,
+        authorId: 1,
+        avatarURL: 'https://i0.wp.com/www.cssscript.com/wp-content/uploads/2020/12/Customizable-SVG-Avatar-Generator-In-JavaScript-Avataaars.js.png?fit=438%2C408&ssl=1',
+        commentAuthorNickname: "Kuki",
+        content: 'just a new comment',
+        createdAt: new Date('20 December 2019 14:48')
+    },
+]
 
 export interface PostProps {
     avatarURI: string;
@@ -42,10 +90,10 @@ export interface PostComment {
 }
 
 type PostContextType = {
-    newComment: string | null,
-    setNewComment: React.Dispatch<React.SetStateAction<string>>,
-    isEditing: boolean,
-    setIsEditing: React.Dispatch<React.SetStateAction<boolean>>,
+    newComment: string | undefined,
+    setNewComment?: React.Dispatch<React.SetStateAction<string | undefined>>,
+    isEditing: boolean | undefined,
+    setIsEditing?: React.Dispatch<React.SetStateAction<boolean | undefined>>,
     postDeleteConfirm: any,
 }
 
@@ -62,69 +110,29 @@ export const PostContext = createContext<PostContextType>(iUserContextState);
 
 const Post = (props: PostProps) => {
     const router = useRouter();
-    const [postIsDeleted, setPostIsDeleted] = useState(false);
-    const [isEditing, setIsEditing] = useState(false);
-    const [newComment, setNewComment] = useState<string>('');
-    const [isLikedByUser, setIsLikedByUser] = useState<boolean>(props.isLikedByUser);
+    const [postIsDeleted, setPostIsDeleted] = useState<boolean>();
+    const [isEditing, setIsEditing] = useState<boolean>();
+    const [newComment, setNewComment] = useState<string>();
+    const [isLikedByUser, setIsLikedByUser] = useState<boolean>();
     
-    const [title, setTitle] = useState(props.title);
-    const [content, setContent] = useState(props.content);
+    const [title, setTitle] = useState<string>();
+    const [content, setContent] = useState<string>();
 
-    const [editedTitle, setEditedTitle] = useState('');
-    const [editedContent, setEditedContent] = useState('');
+    const [editedTitle, setEditedTitle] = useState<string>();
+    const [editedContent, setEditedContent] = useState<string>();
+
+    useEffect(() => {
+        setPostIsDeleted(false);
+        setIsEditing(false);
+        setNewComment('');
+        setIsLikedByUser(props.isLikedByUser);
+        setTitle(props.title);
+        setContent(props.content);
+        setEditedTitle('');
+        setEditedContent('');
+    }, [])
 
     const toast = useRef(null);
-
-    const[avatarURL, setAvatarURL] = useState('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjpPCSmbEz9MbdmDRHnq0A-r1IgQ2JecU5dA&usqp=CAU');
-
-    const [testComments, setTestComments] = useState<CommentProps[]>([
-        {
-            postId: 1,
-            commentId: 1,
-            authorId: 1,
-            avatarURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHCZuslFbn42wwA9qw6ywBERhtpr_yOFy3Cw&usqp=CAU',
-            commentAuthorNickname: "Kuki",
-            content: 'just a new comment',
-            createdAt: new Date()
-        },
-        {
-            postId: 1,
-            commentId: 1,
-            authorId: 1,
-            avatarURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHCZuslFbn42wwA9qw6ywBERhtpr_yOFy3Cw&usqp=CAU',
-            commentAuthorNickname: "Kuki",
-            content: 'just a new comment',
-            createdAt: new Date()
-        },
-        {
-            postId: 1,
-            commentId: 1,
-            authorId: 1,
-            avatarURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHCZuslFbn42wwA9qw6ywBERhtpr_yOFy3Cw&usqp=CAU',
-            commentAuthorNickname: "Kuki",
-            content: 'just a new comment',
-            createdAt: new Date()
-        },
-        {
-            postId: 1,
-            commentId: 1,
-            authorId: 1,
-            avatarURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHCZuslFbn42wwA9qw6ywBERhtpr_yOFy3Cw&usqp=CAU',
-            commentAuthorNickname: "Kuki",
-            content: 'just a new asdasda',
-            createdAt: new Date(),
-            updatedAt: new Date()
-        },
-        {
-            postId: 1,
-            commentId: 1,
-            authorId: 1,
-            avatarURL: 'https://i0.wp.com/www.cssscript.com/wp-content/uploads/2020/12/Customizable-SVG-Avatar-Generator-In-JavaScript-Avataaars.js.png?fit=438%2C408&ssl=1',
-            commentAuthorNickname: "Kuki",
-            content: 'just a new comment',
-            createdAt: new Date()
-        },
-    ])
 
     const submitEdit = () => {
         setTitle(editedTitle);

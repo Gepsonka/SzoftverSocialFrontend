@@ -1,13 +1,14 @@
 import { Avatar } from "primereact/avatar";
 import { Button } from "primereact/button";
 import { InputTextarea } from "primereact/inputtextarea";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Comment from "./Comment";
 import { CommentProps } from "./Comment";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import 'primereact/resources/primereact.min.css';
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
+import { Toast } from "primereact/toast";
 
 
 export interface FooterTemplateProps {
@@ -18,8 +19,10 @@ export interface FooterTemplateProps {
 
 const FooterTemplate = (props: FooterTemplateProps) => {
 
-    const [newComment, setNewComment] = useState<string | undefined>();
+    const [newComment, setNewComment] = useState<string>('');
     const [comments, setComments] = useState<CommentProps[] | undefined>();
+
+    const toast = useRef(null);
 
     useEffect(() => {
         setNewComment('');
@@ -33,34 +36,34 @@ const FooterTemplate = (props: FooterTemplateProps) => {
                 avatarURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjpPCSmbEz9MbdmDRHnq0A-r1IgQ2JecU5dA&usqp=CAU',
                 commentAuthorNickname: 'Gepsonka',
                 content: newComment!,
-                createdAt: new Date(),
-                commentId: 12,
+                createdAt: new Date('20 December 2019 14:48'),
+                commentId: 12123,
                 authorId: 1
             }]); // to be changed later
         } else {
-            const newComments: CommentProps[] = comments!.concat({
+            setComments([...comments, {
                 postId: 2,
                 avatarURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjpPCSmbEz9MbdmDRHnq0A-r1IgQ2JecU5dA&usqp=CAU',
                 commentAuthorNickname: 'Gepsonka',
                 content: newComment!,
-                createdAt: new Date(),
-                commentId: 12,
+                createdAt: new Date('20 December 2019 14:48'),
+                commentId: 12123,
                 authorId: 1
-            }); // to be changed later
-
-            setComments(newComments);
+            }]);
         }
-
         setNewComment('');
+        // @ts-ignore
+        toast.current.show({severity: 'success', summary: 'Comment submitted', detail: 'Comment successfully submitted!', life: 3000})
         
     }
 
     return (
         <div className="border-top-1 border-400 pt-3">
             {
-                props.comments === undefined ? null :
-                    props.comments!.map(comment => (
-                        <Comment key={comment.commentId} postId={comment.postId} avatarURL={comment.avatarURL} commentAuthorNickname={comment.commentAuthorNickname} content={comment.content} createdAt={comment.createdAt} commentId={comment.commentId} authorId={comment.authorId} />
+                comments === undefined ? null :
+                    comments!.map((comment, index) => (
+                        // TODO: change later the key to postID
+                        <Comment key={index}  postId={comment.postId} avatarURL={comment.avatarURL} commentAuthorNickname={comment.commentAuthorNickname} content={comment.content} createdAt={comment.createdAt} commentId={comment.commentId} authorId={comment.authorId} />
                     ))
 
             }
@@ -73,7 +76,7 @@ const FooterTemplate = (props: FooterTemplateProps) => {
                     <Button label="Comment" onClick={() => addComment()} className="p-button-outlined p-button-sm" disabled={newComment === ''} />
                 </div>
             </div>
-
+            <Toast ref={toast}/>
         </div>
     )
 }

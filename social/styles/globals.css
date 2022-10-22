@@ -26,3 +26,7 @@ a {
 .auth-body {
   min-height: 100vh;
 }
+
+.profile-box-shadow {
+  box-shadow: 12px 20px blue;
+}

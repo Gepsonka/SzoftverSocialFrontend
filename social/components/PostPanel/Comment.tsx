@@ -21,14 +21,16 @@ export interface CommentProps {
 // or delete the comment
 
 export const Comment: FC<CommentProps> = (props: CommentProps) => {
-    const [isDeleted, setIsDeleted] = useState(false);
-    const [content, setContent] = useState(props.content);
-    const [isEditing, setIsEditing] = useState(false);
-    const [editedContent, setEditedContent] = useState(content);
+    const [isDeleted, setIsDeleted] = useState<boolean>(false);
+    const [content, setContent] = useState<string>('');
+    const [isEditing, setIsEditing] = useState<boolean>(false);
+    const [editedContent, setEditedContent] = useState<string>('');
 
     useEffect(() => {
         setIsDeleted(false);
-        setContent(props.content)
+        setContent(props.content);
+        setIsEditing(false);
+        setEditedContent(content);
     }, [])
 
     const toast = useRef(null);
@@ -43,7 +45,6 @@ export const Comment: FC<CommentProps> = (props: CommentProps) => {
     }
 
     
-
     const commentDeleteConfirm = () => {
         confirmDialog({
             message: 'Are you sure you want to delete the comment?',
@@ -65,7 +66,7 @@ export const Comment: FC<CommentProps> = (props: CommentProps) => {
         <div>
             <div className={`${isDeleted ? 'hidden' : 'flex'} flex-column mb-3 p-3 pt-2 w-full border-solid border-cyan-500 border-round-lg bg-cyan-100 `}>
                 <div className="flex align-content-end">
-                    <Avatar image={props.avatarURL} className="mr-2 mt-auto" />
+                    <Avatar shape="circle" image={props.avatarURL} className="mr-2 mt-auto" />
                     <h3 className="m-0 mt-auto mr-2">{props.commentAuthorNickname}</h3>
                     <small className="mt-auto flex-grow-1">{props.updatedAt === undefined ? `Created: ${props.createdAt.toUTCString()}` : `Edited: ${props.updatedAt.toUTCString()}`}</small>
                     { !isEditing && <Button onClick={commentDeleteConfirm} icon="pi pi-trash" className="p-button-rounded p-button-sm p-button-text p-button-secondary" />}
