@@ -28,5 +28,13 @@ a {
 }
 
 .profile-box-shadow {
+  font-family: "Aldrich";
+  border: 7px solid blue;
   box-shadow: 12px 20px blue;
+  color: blue;
+}
+
+@font-face {
+  font-family: "Aldrich";
+  src: url("../assets/Aldrich/Aldrich-Regular.ttf") format("truetype");
 }
