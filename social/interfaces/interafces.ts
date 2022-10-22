@@ -29,14 +29,3 @@ export interface PostComment {
     isUserAuthor: boolean;
 }
 
-export interface PostProps {
-    avatarURI: string;
-    authorNickname: string;
-    createdAt: Date;
-    updatedAt?: Date;
-    title: string;
-    content: string;
-    imageURIs?: string[];
-    isLikedByUser: boolean;
-    comments: PostComment[];
-}

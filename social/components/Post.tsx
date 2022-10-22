@@ -3,17 +3,35 @@ import { useRouter } from "next/router";
 import { Avatar } from 'primereact/avatar';
 import { Button } from 'primereact/button';
 import Link from "next/link";
-import { PostProps } from "../interfaces/interafces"
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import 'primereact/resources/primereact.min.css';
 import 'primeflex/primeflex.css';
 import 'primeicons/primeicons.css';
 import { Card } from "primereact/card";
 import { InputTextarea } from "primereact/inputtextarea";
-import Comment from "./Comment";
+import Comment from "./PostPanel/Comment";
 import { InputText } from "primereact/inputtext";
 import { Toast } from 'primereact/toast';
 import { ConfirmDialog, confirmDialog } from "primereact/confirmdialog";
+import HeaderTemplate from "./PostPanel/HeaderTemplate";
+import FooterTemplate from "./PostPanel/FooterTemplate";
+import { CommentProps } from "./PostPanel/Comment";
+
+
+
+
+
+export interface PostProps {
+    avatarURI: string;
+    authorNickname: string;
+    createdAt: Date;
+    updatedAt?: Date;
+    title: string;
+    content: string;
+    imageURIs?: string[];
+    isLikedByUser: boolean;
+    comments: PostComment[];
+}
 
 
 export interface PostComment {
@@ -25,16 +43,20 @@ export interface PostComment {
 
 type PostContextType = {
     newComment: string | null,
-    setNewComment: React.Dispatch<React.SetStateAction<string>>
+    setNewComment: React.Dispatch<React.SetStateAction<string>>,
+    isEditing: boolean,
+    setIsEditing: React.Dispatch<React.SetStateAction<boolean>>,
+    postDeleteConfirm: any,
 }
 
 
-const iUserContextState = {
+const iUserContextState: PostContextType = {
     newComment: '',
-    setNewComment: () => {}
+    setNewComment: () => {},
+    isEditing: false,
+    setIsEditing: () => {},
+    postDeleteConfirm: () => {}
 }
-
-
 
 export const PostContext = createContext<PostContextType>(iUserContextState);
 
@@ -52,6 +74,57 @@ const Post = (props: PostProps) => {
     const [editedContent, setEditedContent] = useState('');
 
     const toast = useRef(null);
+
+    const[avatarURL, setAvatarURL] = useState('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSjpPCSmbEz9MbdmDRHnq0A-r1IgQ2JecU5dA&usqp=CAU');
+
+    const [testComments, setTestComments] = useState<CommentProps[]>([
+        {
+            postId: 1,
+            commentId: 1,
+            authorId: 1,
+            avatarURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHCZuslFbn42wwA9qw6ywBERhtpr_yOFy3Cw&usqp=CAU',
+            commentAuthorNickname: "Kuki",
+            content: 'just a new comment',
+            createdAt: new Date()
+        },
+        {
+            postId: 1,
+            commentId: 1,
+            authorId: 1,
+            avatarURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHCZuslFbn42wwA9qw6ywBERhtpr_yOFy3Cw&usqp=CAU',
+            commentAuthorNickname: "Kuki",
+            content: 'just a new comment',
+            createdAt: new Date()
+        },
+        {
+            postId: 1,
+            commentId: 1,
+            authorId: 1,
+            avatarURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHCZuslFbn42wwA9qw6ywBERhtpr_yOFy3Cw&usqp=CAU',
+            commentAuthorNickname: "Kuki",
+            content: 'just a new comment',
+            createdAt: new Date()
+        },
+        {
+            postId: 1,
+            commentId: 1,
+            authorId: 1,
+            avatarURL: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQHCZuslFbn42wwA9qw6ywBERhtpr_yOFy3Cw&usqp=CAU',
+            commentAuthorNickname: "Kuki",
+            content: 'just a new asdasda',
+            createdAt: new Date(),
+            updatedAt: new Date()
+        },
+        {
+            postId: 1,
+            commentId: 1,
+            authorId: 1,
+            avatarURL: 'https://i0.wp.com/www.cssscript.com/wp-content/uploads/2020/12/Customizable-SVG-Avatar-Generator-In-JavaScript-Avataaars.js.png?fit=438%2C408&ssl=1',
+            commentAuthorNickname: "Kuki",
+            content: 'just a new comment',
+            createdAt: new Date()
+        },
+    ])
 
     const submitEdit = () => {
         setTitle(editedTitle);
@@ -79,54 +152,6 @@ const Post = (props: PostProps) => {
             }
         });
     }
-
-    const responsiveOptions = [
-        {
-            breakpoint: '1024px',
-            numVisible: 5
-        },
-        {
-            breakpoint: '768px',
-            numVisible: 3
-        },
-        {
-            breakpoint: '560px',
-            numVisible: 1
-        }
-    ];
-
-    const headerTemplate = () => {
-
-        return (
-            <div className="flex p-3 border-solid border-primary bg-indigo-100 border-round-top">
-                <Avatar className="mr-3" size="large" image={props.avatarURI as string} />
-                <h3 className="inline mr-2">{props.authorNickname}</h3>
-                <small className="align-self-center flex-grow-1">{props.updatedAt === undefined ? `Created: ${props.createdAt.toUTCString()}` : `Edited: ${props.updatedAt.toUTCString()}`}</small>
-                { !isEditing && <Button onClick={postDeleteConfirm} icon="pi pi-trash" className="p-button-rounded p-button-outlined p-button-sm p-button-secondary align-self-center" />}
-                <Button icon="pi pi-pencil" className="ml-2 p-button-rounded p-button-secondary p-button-outlined align-self-center" aria-label="Bookmark" onClick={() => setIsEditing(!isEditing)}  />
-            </div>
-        )
-    }
-
-    const footerTemplate = () => {
-
-        return (
-            <div className="border-top-1 border-400 pt-3">
-                <Comment postId={0} avatarURL={"https://pfpmaker.com/_nuxt/img/profile-3-1.3e702c5.png"} commentAuthorNickname={"Csoki"} content={"agyfasz"} createdAt={new Date()} commentId={0} authorId={0} />
-                <div className="border-top-1 border-300 pt-3">
-                    <div className="flex w-full p-fluid mb-2">
-                        <Avatar className="mr-1" image="https://pfpmaker.com/_nuxt/img/profile-3-1.3e702c5.png" />
-                        <InputTextarea autoResize value={newComment} onChange={(e) => setNewComment(e.target.value)} />
-                    </div>
-                    <div className="flex w-full justify-content-end">
-                        <Button label="Comment" className="p-button-outlined p-button-sm" disabled={newComment === ''} />
-                    </div>
-                </div>
-                
-            </div>
-        )
-    }
-
     // TODO: create liking call to backend
 
     return (
@@ -134,11 +159,11 @@ const Post = (props: PostProps) => {
             <Toast ref={toast} />
             <ConfirmDialog key={'PostDialog'} />
             <div className={postIsDeleted ? 'hidden' : ''}>
-                <PostContext.Provider value={{newComment, setNewComment}}>
+                <PostContext.Provider value={{newComment, setNewComment, isEditing, setIsEditing, postDeleteConfirm}}>
                     
                     {
                     isEditing ? 
-                        <Card header={headerTemplate} footer={footerTemplate}>
+                        <Card header={<HeaderTemplate avatarURI={props.avatarURI} authorNickname={props.authorNickname} createdAt={props.createdAt} updatedAt={props.updatedAt} />} footer={<FooterTemplate avatarURL={avatarURL} comments={testComments} />}>
                             <div className="p-fluid">
                                 <InputText value={editedTitle} className="mb-3" onChange={(e) => setEditedTitle(e.target.value)} placeholder="Title" />
                                 <InputTextarea  className="mb-2" value={editedContent} onChange={(e) => setEditedContent(e.target.value)} rows={3} />
@@ -148,7 +173,7 @@ const Post = (props: PostProps) => {
                             </div>
                         </Card>
                         :
-                        <Card header={headerTemplate} footer={footerTemplate}>
+                        <Card header={<HeaderTemplate avatarURI={props.avatarURI} authorNickname={props.authorNickname} createdAt={props.createdAt} updatedAt={props.updatedAt} />} footer={<FooterTemplate avatarURL={avatarURL} comments={testComments} />}>
                             <div>
                                 <h2>{title}</h2>
                                 <p>{content}</p>

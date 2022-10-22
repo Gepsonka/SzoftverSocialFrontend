@@ -3,7 +3,7 @@ import { Button } from "primereact/button";
 import { confirmDialog, ConfirmDialog } from "primereact/confirmdialog";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
-import React, { FC, useRef, useState } from "react";
+import React, { FC, useEffect, useRef, useState } from "react";
 
 
 export interface CommentProps {
@@ -25,6 +25,11 @@ export const Comment: FC<CommentProps> = (props: CommentProps) => {
     const [content, setContent] = useState(props.content);
     const [isEditing, setIsEditing] = useState(false);
     const [editedContent, setEditedContent] = useState(content);
+
+    useEffect(() => {
+        setIsDeleted(false);
+        setContent(props.content)
+    }, [])
 
     const toast = useRef(null);
 
@@ -55,9 +60,6 @@ export const Comment: FC<CommentProps> = (props: CommentProps) => {
             }
         });
     }
-
-    
-
 
     return (
         <div>
