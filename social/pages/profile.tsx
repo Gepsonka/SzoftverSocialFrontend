@@ -5,7 +5,9 @@ import { Image } from 'primereact/image';
 import { useState } from "react";
 import { TabView, TabPanel } from 'primereact/tabview';
 import Post from "../components/Post";
-
+import { ConfirmDialog } from "primereact/confirmdialog";
+import UserCreatePost from "../components/UserCreatePost";
+import UserUpdate from "../components/UserUpdate";
 
 
 const Profile: NextPage = () => {
@@ -19,7 +21,7 @@ const Profile: NextPage = () => {
         setFirstName('Kalanyos')
         setLastName('Jozsef');
         setDateJoined(new Date('20 December 2019 14:48').toISOString().slice(0, 10));
-        setTabIndex(0);
+        setTabIndex(1);
     },[])
 
     const tabItems = [
@@ -49,18 +51,19 @@ const Profile: NextPage = () => {
                             <Post avatarURI={'https://pfpmaker.com/_nuxt/img/profile-3-1.3e702c5.png'} authorNickname={'csoki'} createdAt={new Date('20 December 2019 14:48')} title="asdad" content={""} imageURIs={undefined} isLikedByUser={false} comments={[]} />
                         </TabPanel>
                         <TabPanel header="Create post" leftIcon="pi pi-fw pi-plus">
-
+                            <UserCreatePost/>
                         </TabPanel>
                         <TabPanel header="Liked post" leftIcon="pi pi-fw pi-heart">
 
                         </TabPanel>
                         <TabPanel header="Update profile" leftIcon="pi pi-fw pi-user">
-
+                            <UserUpdate/>
                         </TabPanel>
                     </TabView>
                 </div>
 
             </div>
+            <ConfirmDialog key={'PostDialog'} />
         </div>
     )
 }

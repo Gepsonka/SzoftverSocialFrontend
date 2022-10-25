@@ -165,7 +165,7 @@ const Post = (props: PostProps) => {
     return (
         <div>
             <Toast ref={toast} />
-            <ConfirmDialog key={'PostDialog'} />
+            
             <div className={postIsDeleted ? 'hidden' : ''}>
                 <PostContext.Provider value={{newComment, setNewComment, isEditing, setIsEditing, postDeleteConfirm}}>
                     
