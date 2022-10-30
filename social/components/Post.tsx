@@ -161,6 +161,7 @@ const Post = (props: PostProps) => {
         });
     }
     // TODO: create liking call to backend
+    // TODO: Load imges, if no images do not display gallery
 
     return (
         <div>

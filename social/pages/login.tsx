@@ -5,7 +5,7 @@ import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
 import Link from 'next/link'
-import { loginUser } from '../services/authService';
+import { authService } from '../services/AuthService';
 import { useRouter } from 'next/router'
 import { isTokenExists } from '../services/JWTService';
 
@@ -46,7 +46,7 @@ const Login: NextPage = () => {
     // TODO: implement login with jwt
     setIsLoading(true)
     try {
-      let res = await loginUser(username, password);
+      let res = await authService.loginUser(username, password);
 
       router.push('/profile');
     } catch (e) {
