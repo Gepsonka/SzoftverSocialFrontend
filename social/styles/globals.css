@@ -26,3 +26,43 @@ a {
 .auth-body {
   min-height: 100vh;
 }
+
+.profile-box-shadow {
+  font-family: "Aldrich";
+  border: 7px solid blue;
+  box-shadow: 12px 20px blue;
+  color: blue;
+}
+
+@font-face {
+  font-family: "Aldrich";
+  src: url("../assets/Aldrich/Aldrich-Regular.ttf") format("truetype");
+}
+
+.p-inputtext {
+  border: 3px solid black;
+  box-shadow: none;
+  transition: none;
+}
+
+.p-float-label label {
+  font-weight: 800;
+}
+
+.p-float-label {
+  transition: none;
+  box-shadow: none;
+}
+
+.p-inputtext:hover {
+  box-shadow: none;
+  border: none;
+  border: 3px solid black;
+  transition: none;
+  
+}
+
+.p-inputtext:focus {
+  box-shadow: none;
+  transition: none;
+}

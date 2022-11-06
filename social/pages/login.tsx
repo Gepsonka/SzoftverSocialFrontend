@@ -5,7 +5,7 @@ import { InputText } from 'primereact/inputtext';
 import { Password } from 'primereact/password';
 import { Button } from 'primereact/button';
 import Link from 'next/link'
-import { loginUser } from '../services/authService';
+import { authService } from '../services/AuthService';
 import { useRouter } from 'next/router'
 import { isTokenExists } from '../services/JWTService';
 
@@ -46,13 +46,14 @@ const Login: NextPage = () => {
     // TODO: implement login with jwt
     setIsLoading(true)
     try {
-      let res = await loginUser(username, password);
+      let res = await authService.loginUser(username, password);
 
       router.push('/profile');
     } catch (e) {
       setUsernameIsValid(false);
       setPasswordIsValid(false);
       setBadPasswordOrUsername(true);
+      console.log(e)
     }
     setIsLoading(false);
   }
@@ -75,7 +76,7 @@ const Login: NextPage = () => {
         </div>
         { badPasswordOrUsername && <small style={{textAlign:'left'}} className="p-error block mb-3">Wrong usename or password.</small>}
         <Button label='Login' onClick={() => {login()}} loading={isLoading} />
-        <p style={{textAlign: 'left'}}>Or if don't have account <Link href={'/register'}><Button label="register here" className="p-button-link inline p-0" /></Link>.</p>
+        <p style={{textAlign: 'left'}}>Or if don&apos;t have account <Link href={'/register'}><Button label="register here" className="p-button-link inline p-0" /></Link>.</p>
       </Card>
     </div>
     

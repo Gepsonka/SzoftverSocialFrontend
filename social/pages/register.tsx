@@ -23,7 +23,7 @@ const Register: NextPage = () => {
     const [passwordAgain, setPasswordAgain] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [dateOfBirth, setDateOfBirth] = useState(undefined);
+    const [dateOfBirth, setDateOfBirth] = useState<Date | Date[] | undefined>(undefined);
 
     const [usernameIsIncorrect, setUsernameIsIncorrect] = useState(false);
     const [emailIsEmpty, setEmailIsEmpty] = useState(false);
@@ -285,7 +285,7 @@ const Register: NextPage = () => {
         let requestData: RegisterRequest = {
             firstName: firstName,
             lastName: lastName,
-            dateOfBirth: dateOfBirth!,
+            dateOfBirth: dateOfBirth! as Date,
             username: username,
             email: email,
             password: password

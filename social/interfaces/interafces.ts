@@ -3,6 +3,8 @@
 
 export type NavBarProps = {
     isLoggedIn: boolean;
+    firstName: string | null;
+    lastName: string | null;
 }
 
 export interface LoginResponse {
@@ -18,3 +20,12 @@ export interface RegisterRequest {
     email: string;
     password: string;
 }
+
+export interface PostComment {
+    postID: number;
+    avatarURI: string;
+    createdAt: Date;
+    content: string;
+    isUserAuthor: boolean;
+}
+
