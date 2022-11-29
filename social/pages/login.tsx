@@ -8,13 +8,14 @@ import Link from 'next/link'
 import { authService } from '../services/AuthService';
 import { useRouter } from 'next/router'
 import { isTokenExists } from '../services/JWTService';
+import { axiosInstance } from '../services/axios';
 
 const Login: NextPage = () => {
   
   const router = useRouter();
 
   useEffect(() => {
-    if (isTokenExists()) {
+    if (localStorage.getItem('token') !== null) {
       router.push('/profile');
     }
   }, [])
@@ -31,7 +32,6 @@ const Login: NextPage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const login = async () => {
-    
     if (username === '' && password === ''){
       setUsernameIsValid(false);
       setPasswordIsValid(false);
@@ -46,7 +46,12 @@ const Login: NextPage = () => {
     // TODO: implement login with jwt
     setIsLoading(true)
     try {
-      let res = await authService.loginUser(username, password);
+      let res = await axiosInstance.post(('/login'), {
+        username: username,
+        password: password
+      })
+
+      localStorage.setItem('token', res.data.token)
 
       router.push('/profile');
     } catch (e) {

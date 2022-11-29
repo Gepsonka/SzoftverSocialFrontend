@@ -10,6 +10,7 @@ import { Tag } from "primereact/tag";
 import { Button } from "primereact/button";
 import { ProgressBar } from "primereact/progressbar";
 import { Toast } from "primereact/toast";
+import { axiosInstance } from "../services/axios";
 
 
 const UserCreatePost = () => {
@@ -20,9 +21,19 @@ const UserCreatePost = () => {
     const toast = useRef(null);
     const fileUploadRef = useRef(null);
 
-    const onUpload = () => {
-        // @ts-ignore
-        toast.current.show({severity: 'info', summary: 'Success', detail: 'File Uploaded'});
+    const createPost = async () => {
+        try {
+            const res = await axiosInstance.post('/post/create-post', {
+                title: postTitle,
+                content: postContent
+            })
+            // @ts-ignore
+            toast.current.show({severity: 'info', summary: 'Success', detail: 'Post created'});
+        } catch (e) {
+            // @ts-ignore
+            toast.current.show({severity: 'error', summary: 'Error', detail: 'post creation failed'});
+        }
+        
     }
 
     
@@ -40,11 +51,11 @@ const UserCreatePost = () => {
             </div>
             <div className="mb-4">
                 <h2>Upload images</h2>
-                <FileUpload name="demo[]" url="https://primefaces.org/primereact/showcase/upload.php" onUpload={onUpload} multiple accept="image/*" maxFileSize={1000000}
+                <FileUpload name="demo[]" url="https://primefaces.org/primereact/showcase/upload.php" multiple accept="image/*" maxFileSize={1000000}
                     emptyTemplate={<p className="m-0">Drag and drop files to here to upload.</p>} />
             </div>
             <div>
-                <Button label="Upload Post" disabled={postTitle === '' || postContent === ''} />
+                <Button label="Upload Post" onClick={() => createPost()} disabled={postTitle === '' || postContent === ''} />
             </div>
             <Toast ref={toast}></Toast>
         </div>

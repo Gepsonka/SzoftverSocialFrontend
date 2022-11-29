@@ -1,8 +1,2 @@
-import { useState } from "react";
-
-
-export default function useUser(){
-    const [user, setUser] = useState();
-
-    
-}
+import { useEffect, useState } from "react";
+import { axiosInstance } from "../services/axios";

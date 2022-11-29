@@ -39,7 +39,7 @@ a {
   src: url("../assets/Aldrich/Aldrich-Regular.ttf") format("truetype");
 }
 
-.p-inputtext {
+/* .p-inputtext {
   border: 3px solid black;
   box-shadow: none;
   transition: none;
@@ -65,4 +65,4 @@ a {
 .p-inputtext:focus {
   box-shadow: none;
   transition: none;
-}
+} */

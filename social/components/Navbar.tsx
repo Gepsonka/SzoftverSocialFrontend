@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Menubar } from 'primereact/menubar';
 import {  MenuItem } from "primereact";
 import Link from 'next/link';
@@ -13,8 +13,15 @@ import { Image } from 'primereact/image';
 
 
 
-const Navbar = ({isLoggedIn, firstName, lastName}: NavBarProps) => {
+const Navbar = ({firstName, lastName}: NavBarProps) => {
     const router = useRouter();
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+    useEffect(() => {
+        setIsLoggedIn(localStorage.getItem('token') !== null);
+    }, [])
+    
+    
 
     let items: MenuItem[];
 
@@ -49,7 +56,8 @@ const Navbar = ({isLoggedIn, firstName, lastName}: NavBarProps) => {
     }
 
     const logoutUser = () => {
-        // TODO: implementation
+        localStorage.removeItem('token');
+        router.push('/login');
     }
 
     const end = isLoggedIn ? <div><Button label="Logout" className="p-button-outlined p-button-sm" onClick={() => logoutUser()} /></div> : <div><Button className="p-button-outlined mr-2  p-button-sm" label="Login" onClick={() => {router.push('/login')}} /><Button className="p-button-outlined  p-button-sm" label="Register" onClick={() => router.push('/register')} /></div>

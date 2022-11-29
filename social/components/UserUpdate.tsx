@@ -1,9 +1,12 @@
+import axios from "axios";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { FileUpload } from "primereact/fileupload";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
-import React, { useState } from "react";
+import { Toast } from 'primereact/toast';
+import React, { useRef, useState } from "react";
+import { axiosInstance } from "../services/axios";
 
 
 
@@ -14,21 +17,28 @@ const UserUpdate = () => {
     const [firstName, setFisrtName] = useState<string>('');
     const [lastName, setLastName] = useState<string>('');
     const [email, setEmail] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
 
+    const toast = useRef(null);
 
-    const footer = (
-        <React.Fragment>
-            <Divider />
-            <p className="mt-2">Suggestions</p>
-            <ul className="pl-2 ml-2 mt-0" style={{lineHeight: '1.5'}}>
-                <li>At least one lowercase</li>
-                <li>At least one uppercase</li>
-                <li>At least one numeric</li>
-                <li>Minimum 8 characters</li>
-            </ul>
-        </React.Fragment>
-    );
+    const updateProfile = async () => {
+        let data: any = {};
+
+        {username === '' ? null : data.username = username}
+        {firstName === '' ? null : data.firstName = firstName}
+        {lastName === '' ? null : data.lastName = lastName}
+        {email === '' ? null : data.email = email}
+
+        try {
+            const res = await axiosInstance.put(`/user-update`, data)
+            localStorage.setItem('user', res.data)
+            // @ts-ignore
+            toast.current.show({severity:'success', summary: 'Successful update', detail:'Your profile was updated successfully', life: 3000});
+        } catch (e) {
+            // @ts-ignore
+            toast.current.show({severity:'error', summary: 'Update failed', detail: e.response.data.msg, life: 3000});
+            console.log(e)
+        }
+    }
 
     return (
         <div className="flex w-full flex-column">
@@ -45,11 +55,6 @@ const UserUpdate = () => {
                         <span className="p-float-label">
                             <InputText id="firstName" value={firstName} onChange={(e) => setFisrtName(e.target.value)} />
                             <label htmlFor="firstName">First name</label>
-                        </span>
-                    </div>
-                    <div className="mt-5 p-fluid">
-                        <span className="p-float-label">
-                        <Password value={password} onChange={(e) => setPassword(e.target.value)} footer={footer} />                            <label htmlFor="firstName">Password</label>
                         </span>
                     </div>
                 </div>
@@ -71,11 +76,10 @@ const UserUpdate = () => {
                     </div>
                 </div>
                 <div className="flex w-full justify-content-center mt-5">
-                    <Button icon="pi pi-upload" label="Submit" aria-label="Submit"  />
+                    <Button onClick={() => updateProfile()} icon="pi pi-upload" label="Submit" aria-label="Submit"  />
                 </div>
-                
             </div>
-            
+            <Toast ref={toast} />
         </div> 
     )
 
